@@ -45,7 +45,7 @@ Suits ANOVA design.
 * contrast coding.
 * treatment coding.
 ```
-factor(), contrasts(), contr.sum(), matrix(), contr.treatment(), solve(t())
+factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 ```
 
 ## Step 3 Try the full Model
@@ -114,7 +114,7 @@ influence.ME, numeric + for loop
 ## Get the statistics of main effects or interactions
 * perform the likelihood ratio test between a full model and a reduced model
 ```
-anova()
+anova
 ```
 
 ## Get the statistics of multiple comparisons within a predictor 
@@ -125,7 +125,7 @@ anova()
 * Model the interaction variable
 * Tukey comparison
 ```
-interaction(), summary(glht())
+interaction, summary(glht())
 ```
 
 </p>
