@@ -10,7 +10,7 @@ The dataset was adapted from one of the studies I carried out during the first y
 | :---: | --- |
 | training days | 1) day 1, 2) day 2, 3) day 3 |
 | testing stimuli | 1) trained tonal stimuli, 2) untrained tonal stimuli |
-| voice of speaker | 1) female, 2) male |
+| voice of speaker | 1) trained voice, 2) untrained voice |
 | --- | --- |
 | **Dependent Variable** | judgement on testing stimuli ('yes'/'no' response to a question of 'Did you hear this testing word in the training phase?') |
 
