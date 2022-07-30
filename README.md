@@ -57,7 +57,7 @@ factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 * inspect the outputs. Questions to be considered:
   - is the model well converged?
   - is there any 0/1 correlation in random effects?
-  - whether the model is singular fitted (@mitang01 is this right?)?
+  - whether the model is singular fitted (i.e., the random slope is too small@mitang01 is this right?)?
 ```
 glmer, summary, isSingular
 ```
