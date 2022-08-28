@@ -126,15 +126,16 @@ It is very likely that the full model fails to converge or is overly/singularly 
 
 ## Step 5 Decide the simplest and best fitted model
 * Repeat step 4 until I find the best model. Use `anova ()` to perform model comparison. Criteria of well fitted models are: (@mitang01 need some refs here, maybe Barr D.J.?)
-  - with normal distribued residuals (applies to continuous data).
+  - with normal distributed residuals (applies to continuous data).
   - small ACI and df.
   - no warning of convergence issues.
   - no under/over fitting issues (i.e., no 0/1 correlation between any two random effects or fixed effects)
 * Spot influential data points (Nieuwenhuis, te Grotenhuis, & Pelzer, 2012; Winter, B., 2013). If there are, consider the rationale to keep or remove them. If I choose to remove, fit the model again and run model comparison. 
-* Keep either the best fitted model or the model with more data. 
 ```
 influence.ME, numeric + for loop
 ```
+* Keep either the best fitted model or the model with more data. 
+
 
 <details><summary>(if necessary) interactions, main effects, and multiple comparisons</summary>
 <p>
