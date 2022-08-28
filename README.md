@@ -1,6 +1,7 @@
 # LME-workflow
 
-This is a step-by-step tutorial of how to analyze psycholinguistic data using the Generalized Linear Mixed Effect Model. It's based on my experience and the inputs I got from various workshops, papars, and web posts. I cannot guranteen this is a one-size-fit-all tutorial for any linguistic study. Having this repo here is mainly to make my analysis method replicable. If it could also help anyone at some point, it's my honor :)
+This is a step-by-step tutorial of how to analyze psycholinguistic data using the Generalized Linear Mixed Effect Model. It's based on my experience and the inputs I got from various workshops, papars, and web posts. I cannot guranteen this is a one-size-fit-all tutorial for any linguistic study. Having this repo here is mainly to make my analysis method replicable. If it could also help anyone at some point, it's my honor :)  
+
 
 ## Step 0 (Most importantly!) Have a valid design with sufficient data
 
@@ -18,20 +19,22 @@ To further describe the design, it aimed at training non-tonal language speakers
 
 
 ## Step 1 Organize the dataframe
+
+(In the code chunks are the indexes of functions that can be used. The language is R)
+
 * select variables of interest from the original data file. 
 ```
 filter, dplyr::select
 ```
 * remove NA values.
 ```
-drop.na
+filter(!is.na()), which(!complete.cases())
 ```
 * check the descriptive data. Questions to be considered: 
   - does each condition has comparable amount of data? 
   - whether the average means are in line with my hypothesis? 
-  - do the data follow normal distribution (if necessary (@mitang01 need to check))?
 ```
-tapply, aggregate, boxplot
+tapply, aggregate, boxplot, interaction.plot
 ```
 
 
@@ -56,15 +59,33 @@ factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 * feed the dataframe to the model
 * inspect the outputs. Questions to be considered:
   - is the model well converged?
-  - is there any 0/1 correlation in random effects?
-  - whether the model is singular fitted (i.e., the random slope is too small@mitang01 is this right?)?
+  - is there any 0/1 correlation in random effects (i.e., could be not enough data to estimate parameters or variances on some terms are too small)?
+  - whether the model is singular fitted (i.e., the random effect is too small)?
 ```
-glmer, summary, isSingular
+glmer, summary
 ```
-* plot the residuals of the model to check if the residuals follow normal distribution. ***Bimodel distribution could mean I either chose a wrong model or missed an important predictor***
+* plot the residuals of the model to check if the residuals follow normal distribution. ***NB This applies to the case when the dependent variable has continuous data. As for the case when the model si with binominal data, see [here](#residuals-GLME). *** 
 ```
 plot(fitted(), resid()), qqnorm(resid()), qqline(resid()), plot(density(resid())), shapiro.test(resid())
 ```
+
+<a name="residuals-GLME"></a>
+<details><summary>residuals of GLME mdoel</summary>
+<p>
+The GLME mdoel cannot have normally distributed when the raw data is binominal. Such as the data I have in the current study. If one really wants to check whether or not the data suit the LME model, then here is the solution:
+- Aggregate the dependent variable by items. That's saying, there are fixed factors and subject numbers, plus two columns showing the aggregation of the binominal dependent variables in the new dataframe.
+```
+ddply(summarise, mean(), length(), sum())
+```
+- combine the aggregations into a new dependent variable.
+```
+cbind
+```
+- Model using the newdata frame.
+- Check the distribution of residuals.
+
+</p>
+</details>
 
 
 <details><summary>when the full model fails to converge</summary>
@@ -78,7 +99,7 @@ all_fit, glmerControl
 ```
 - increase possible iterations.
 - drop unecessary random slopes. But only do this when I'm sure the random slope to be dropped do not vary too much on its random effect.
-- drop the random effect of item. But only do this when I'm sure that the intercepts of item do not vary.
+- drop the random effect of item. But only do this when I'm sure that the intercepts of item do not vary too much.
 ```
 coef
 ```
@@ -88,9 +109,9 @@ coef
 
 ## Step 4 Reduce the model
 * Try one of the following methods:
-  - reduce it as an addition model if the full model is an interaction model (NB, an additional model is the reduced model of an interaction model when the fixed effects are the same).
-  - remove less interesting predictors
-  - remove certain levels of a predictor
+  - reduce it as an addition model if the full model is an interaction model has no significant interaction effect.
+  - remove less interesting predictors.
+  - remove certain levels of a predictor.
   - drop unecessary random slopes. But only do this when I'm sure the predictor involved in the random slope do not vary too much on its random effect. Plotting the  intercepts can be helpful. 
   - drop the random effect of item. But only do this when I'm sure the intercepts of item do not vary.
 * plot the residuals of the model to check if the residuals of the reduced model follow normal distribution.
@@ -98,12 +119,13 @@ coef
 
 
 ## Step 5 Decide the simplest and best fitted model
-* Repeat step 3 & 4 until I find the best model. Criteria of well fitted models are: (@mitang01 insert some refs here, maybe Barr D.J.?)
-  - with normal distribued residuals
-  - small ACI and df
-  - no warning of convergence issues
+* Repeat step 4 until I find the best model. Use `anova` to perform model comparison. Criteria of well fitted models are: (@mitang01 need some refs here, maybe Barr D.J.?)
+  - with normal distribued residuals (applies to continuous data).
+  - small ACI and df.
+  - no warning of convergence issues.
   - no under/over fitting issues (i.e., no 0/1 correlation between any two random effects or fixed effects)
-* spot influential data points (Nieuwenhuis, te Grotenhuis, & Pelzer, 2012; Winter, B., 2013)
+* Spot influential data points (Nieuwenhuis, te Grotenhuis, & Pelzer, 2012; Winter, B., 2013). If there are, consider the rationale to keep or remove them. If I choose to remove, fit the model again and run model comparison. 
+* Keep either the best fitted model or the model with more data. 
 ```
 influence.ME, numeric + for loop
 ```
@@ -111,16 +133,20 @@ influence.ME, numeric + for loop
 <details><summary>(if necessary) interactions, main effects, and multiple comparisons</summary>
 <p>
 
-## Get the statistics of main effects or interactions
+## Main effects or interactions
 * perform the likelihood ratio test between a full model and a reduced model
 ```
 anova
 ```
 
-## Get the statistics of multiple comparisons within a predictor 
-* Use the Tukey method (@mitang01 do I have to always use the Tukey method? Any other method avaliable?)
+## Multiple comparisons within a predictor 
+* Use the Tukey method (@mitang01 do I have to always use the Tukey method? Any other methods avaliable?)
+```
+summary(glht())
+```
 
-## Get the statistics of multiple comparisons within an interaction
+
+## Multiple comparisons within an interaction
 * Mutate a new interaction variable in the dataframe
 * Model the interaction variable
 * Tukey comparison
@@ -154,7 +180,7 @@ pirateplot, ggplot
 * cite references involved
   - R
   - lme4
-  - other packages 
+  - other packages that require citation
 
 
 
