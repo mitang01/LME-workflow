@@ -64,7 +64,7 @@ factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 ```
 glmer, summary
 ```
-* plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model si with binominal data, see [here](#residuals-GLME).**
+* plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model is with binominal data, see [here](#residuals-GLME).**
 ```
 plot(fitted(), resid()), qqnorm(resid()), qqline(resid()), plot(density(resid())), shapiro.test(resid())
 ```
@@ -74,7 +74,7 @@ plot(fitted(), resid()), qqnorm(resid()), qqline(resid()), plot(density(resid())
 <details><summary>residuals of GLME mdoel</summary>
 <p>
   
-The GLME mdoel cannot have normally distributed residuals when the raw data is binominal. Such as the data I have in the current study. If one really wants to check whether or not the data suit the LME model, then here is the solution:  
+The GLME mdoel cannot have normally distributed residuals when the raw data is binominal. Such as the data I have in the current study. If one really wants to check whether or not the data suit the LME model, here is the solution:  
   
 - Aggregate the dependent variable by items. That's saying, in the new dataframe there are fixed factors and subject numbers, plus two columns showing the aggregation of the binominal dependent variables.
 ```
