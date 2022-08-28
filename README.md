@@ -64,16 +64,19 @@ factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 ```
 glmer, summary
 ```
-* plot the residuals of the model to check if the residuals follow normal distribution. ***NB This applies to the case when the dependent variable has continuous data. As for the case when the model si with binominal data, see [here](#residuals-GLME). *** 
+* plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model si with binominal data, see [here](#residuals-GLME).**
 ```
 plot(fitted(), resid()), qqnorm(resid()), qqline(resid()), plot(density(resid())), shapiro.test(resid())
 ```
 
 <a name="residuals-GLME"></a>
+
 <details><summary>residuals of GLME mdoel</summary>
 <p>
-The GLME mdoel cannot have normally distributed when the raw data is binominal. Such as the data I have in the current study. If one really wants to check whether or not the data suit the LME model, then here is the solution:
-- Aggregate the dependent variable by items. That's saying, there are fixed factors and subject numbers, plus two columns showing the aggregation of the binominal dependent variables in the new dataframe.
+  
+The GLME mdoel cannot have normally distributed residuals when the raw data is binominal. Such as the data I have in the current study. If one really wants to check whether or not the data suit the LME model, then here is the solution:  
+  
+- Aggregate the dependent variable by items. That's saying, in the new dataframe there are fixed factors and subject numbers, plus two columns showing the aggregation of the binominal dependent variables.
 ```
 ddply(summarise, mean(), length(), sum())
 ```
@@ -81,7 +84,7 @@ ddply(summarise, mean(), length(), sum())
 ```
 cbind
 ```
-- Model using the newdata frame.
+- Fit the model using the newdata frame.
 - Check the distribution of residuals.
 
 </p>
@@ -107,8 +110,11 @@ coef
 </p>
 </details>
 
+It is very likely that the full model fails to converge or is overly/singularly fitted. So then, I should go with:
+
 ## Step 4 Reduce the model
-* Try one of the following methods:
+
+* Try one of the following methods each time:
   - reduce it as an addition model if the full model is an interaction model has no significant interaction effect.
   - remove less interesting predictors.
   - remove certain levels of a predictor.
@@ -119,7 +125,7 @@ coef
 
 
 ## Step 5 Decide the simplest and best fitted model
-* Repeat step 4 until I find the best model. Use `anova` to perform model comparison. Criteria of well fitted models are: (@mitang01 need some refs here, maybe Barr D.J.?)
+* Repeat step 4 until I find the best model. Use `anova ()` to perform model comparison. Criteria of well fitted models are: (@mitang01 need some refs here, maybe Barr D.J.?)
   - with normal distribued residuals (applies to continuous data).
   - small ACI and df.
   - no warning of convergence issues.
