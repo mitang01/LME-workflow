@@ -12,7 +12,7 @@ The dataset was adapted from one of the studies I carried out during the first y
 | training days | 1) day 1, 2) day 2, 3) day 3 |
 | testing stimuli | 1) trained tonal stimuli, 2) untrained tonal stimuli |
 | --- | --- |
-| **Dependent Variable** | judgement on testing stimuli ('yes'/'no' response to a question of 'Did you hear this testing word in the training phase?') |
+| **Dependent Variable** | response ('yes'/'no' response to a question of 'Did you hear this testing word in the training phase?') |
 
 To further describe the design, it aimed at training non-tonal language speakers to pick up lexical tones in an artificial language learning setting. There were 3 training days. Participants first went through a training phase where they heard some artificial tonal word. Then they were examined with how well did they learn the lexcial tones in the testing phase. The hypothesis was as the training went on, participants could show more 'yes' to the trained stimuli but less 'yes' to the counterpart because the trained stimuli only differ from the untrained ones in the lexical tones. 
 
