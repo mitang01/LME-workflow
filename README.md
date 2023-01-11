@@ -11,11 +11,10 @@ The dataset was adapted from one of the studies I carried out during the first y
 | :---: | --- |
 | training days | 1) day 1, 2) day 2, 3) day 3 |
 | testing stimuli | 1) trained tonal stimuli, 2) untrained tonal stimuli |
-| voice of speaker | 1) trained voice, 2) untrained voice |
 | --- | --- |
 | **Dependent Variable** | judgement on testing stimuli ('yes'/'no' response to a question of 'Did you hear this testing word in the training phase?') |
 
-To further describe the design, it aimed at training non-tonal language speakers to pick up lexical tones in an artificial language learning setting. There were 3 training days. Participants first went through a training phase where they heard some artificial tonal word. Then they were examined with how well did they learn the lexcial tones in the testing phase. The hypothesis was  as the training went on, participants could show more 'yes' to the trained stimuli but less 'yes' to the counterpart because the trained stimuli only differ from the untrained ones in the lexical tones. 
+To further describe the design, it aimed at training non-tonal language speakers to pick up lexical tones in an artificial language learning setting. There were 3 training days. Participants first went through a training phase where they heard some artificial tonal word. Then they were examined with how well did they learn the lexcial tones in the testing phase. The hypothesis was as the training went on, participants could show more 'yes' to the trained stimuli but less 'yes' to the counterpart because the trained stimuli only differ from the untrained ones in the lexical tones. 
 
 
 ## Step 1 Organize the dataframe
@@ -50,13 +49,23 @@ Suits ANOVA design.
 ```
 factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 ```
+Explanation for different kinds of coding schemes with sample R code: [R LIBRARY CONTRAST CODING SYSTEMS FOR CATEGORICAL VARIABLES](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/#DEVIATION)
 
 ## Step 3 Try the full Model
 * first go with the full model based on my study design and theoretical rationales.
-  - choose the predictors (fixed effect structure).
-  - decide the random effect structure.
-  - decide random slopes.
-* feed the dataframe to the model
+  - choose the predictors (fixed effect structure).  
+  The full model should have all the predictors with interactions in the study design.
+  - decide the random intercepts and the random slopes (random effect structure).  
+  It may be more difficult to decide the random effect structure. The random intercepts usually includes subject numbers and item numbers (Winter, 2013). And the random slopes depend on whether or not a predictor could vary on a random intercept (Brown, 2021).
+  
+ ```
+ # E.g., for the design in the current example study:
+ 
+ model.full <- response ~ training.days * testing.stimuli + (1 + training.days * testing.stimuli | subject) + (1 + training.days | item)
+ 
+ # The fixed effect structure "training.days * testing.stimuli" is exactly the study design, and
+ # the random effect structure "(1 + training.days * testing.stimuli | subject)" counts for errors among subjects and assumes each subject performs differently when responds to a specific type of testing stimuli on a specific training day. The same logic goes with the term "(1 + training.days | item)".
+ ```
 * inspect the outputs. Questions to be considered:
   - is the model well converged?
   - is there any 0/1 correlation in random effects (i.e., could be not enough data to estimate parameters or variances on some terms are too small)?
@@ -64,7 +73,7 @@ factor, contrasts, contr.sum, matrix, contr.treatment, solve(t())
 ```
 glmer, summary
 ```
-* plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model is with binominal data, see [here](#residuals-GLME).**
+* plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model is with binominal data, see [residuals of GLME mdoel](#residuals-GLME).**
 ```
 plot(fitted(), resid()), qqnorm(resid()), qqline(resid()), plot(density(resid())), shapiro.test(resid())
 ```
@@ -101,8 +110,8 @@ try the belows:
 all_fit, glmerControl
 ```
 - increase possible iterations.
-- drop unecessary random slopes. But only do this when I'm sure the random slope to be dropped do not vary too much on its random effect.
-- drop the random effect of item. But only do this when I'm sure that the intercepts of item do not vary too much.
+- drop unecessary random slopes. But only do this when I'm sure the random slope to be dropped has low variance on its random effect.
+- drop the random effect of item. But only do this when I'm sure that the intercepts of item have low variance.
 ```
 coef
 ```
@@ -114,15 +123,19 @@ It is very likely that the full model fails to converge or is overly/singularly 
 
 ## Step 4 Reduce the model
 
-* Try one of the following methods each time:
-  - reduce it as an addition model if the full model is an interaction model has no significant interaction effect.
+* Try one of the following methods (ranked by priority) each time:  
+  - drop unecessary random slopes. But only do this when I'm sure the random slopes have low variance on its random effect.
+  - drop the random effect of item. But only do this when I'm sure the intercepts of item do not vary.
+  - reduce it as an addition model if the full model is an interaction model and has no significant interaction effect.
   - remove less interesting predictors.
   - remove certain levels of a predictor.
-  - drop unecessary random slopes. But only do this when I'm sure the predictor involved in the random slope do not vary too much on its random effect. Plotting the  intercepts can be helpful. 
-  - drop the random effect of item. But only do this when I'm sure the intercepts of item do not vary.
 * plot the residuals of the model to check if the residuals of the reduced model follow normal distribution.
 
+```
+# After checking the full model output, the reduced model in the current study was:
 
+model.reduce <- response ~ training.days * testing.stimuli + (1 | subject) + (1 | item)
+```
 
 ## Step 5 Decide the simplest and best fitted model
 * Repeat step 4 until I find the best model. Use `anova ()` to perform model comparison. Criteria of well fitted models are: (@mitang01 need some refs here, maybe Barr D.J.?)
@@ -173,7 +186,7 @@ summarise(group_by())
 * Remove NA value
 * Plot
 ```
-pirateplot, ggplot
+ggplot
 ```
 
 ## Step 6 Results and citiations
