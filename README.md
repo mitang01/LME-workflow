@@ -71,7 +71,7 @@ Explanation for different kinds of coding schemes with sample R code: [R LIBRARY
   - is there any 0/1 correlation in random effects (i.e., could be not enough data to estimate parameters or variances on some terms are too small)?
   - whether the model is singular fitted (i.e., the random effect is too small)?
 ```
-glmer, summary
+glmer, lmer, lme, summary
 ```
 * plot the residuals of the model to check if the residuals follow normal distribution. **NB This applies to the case when the dependent variable has continuous data. As for the case when the model is with binominal data, see [residuals of GLME mdoel](#residuals-GLME).**
 ```
